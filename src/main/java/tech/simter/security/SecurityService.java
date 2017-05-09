@@ -9,7 +9,7 @@ public interface SecurityService {
   /**
    * The key that store roles in context
    */
-  String CONTEXT_KEY_ROLES = "ROLES";
+  String CONTEXT_KEY_ROLES = "roles";
 
   /**
    * Determine whether the context has a specified role
