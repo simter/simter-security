@@ -1,54 +1,50 @@
 package tech.simter.security;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import tech.simter.Context;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
-public class SecurityServiceImplTest {
+class SecurityServiceImplTest {
   private SecurityServiceImpl service = new SecurityServiceImpl();
 
-  @Before
-  public void setUp() throws Exception {
+  @BeforeEach
+  void setUp() {
     Context.clear();
   }
 
   @Test
-  public void hasRole() throws Exception {
-    assertThat(service.hasRole("ADMIN"), is(false));
+  void hasRole() {
+    assertFalse(service.hasRole("ADMIN"));
     Context.set(SecurityService.CONTEXT_KEY_ROLES, "ADMIN");
-    assertThat(service.hasRole("ADMIN"), is(true));
+    assertTrue(service.hasRole("ADMIN"));
   }
 
   @Test
-  public void verifyHasRole() throws Exception {
+  void verifyHasRole() {
     Context.set(SecurityService.CONTEXT_KEY_ROLES, "ADMIN");
     service.verifyHasRole("ADMIN");
   }
 
-  @Test(expected = SecurityException.class)
-  public void verifyHasRoleFailed() throws Exception {
-    service.verifyHasRole("ADMIN");
+  @Test
+  void verifyHasRoleFailed() {
+    assertThrows(SecurityException.class, () -> service.verifyHasRole("ADMIN"));
   }
 
   @Test
-  public void hasAnyRole() throws Exception {
-    assertThat(service.hasAnyRole("ADMIN", "TEST"), is(false));
+  void hasAnyRole() {
+    assertFalse(service.hasAnyRole("ADMIN", "TEST"));
     Context.set(SecurityService.CONTEXT_KEY_ROLES, "ADMIN,TEST");
-    assertThat(service.hasAnyRole("NOT-EXISTS"), is(false));
-    assertThat(service.hasAnyRole("ADMIN"), is(true));
-    assertThat(service.hasAnyRole("TEST"), is(true));
-    assertThat(service.hasAnyRole("ADMIN", "TEST"), is(true));
-    assertThat(service.hasAnyRole("TEST", "NOT-EXISTS"), is(true));
+    assertFalse(service.hasAnyRole("NOT-EXISTS"));
+    assertTrue(service.hasAnyRole("ADMIN"));
+    assertTrue(service.hasAnyRole("TEST"));
+    assertTrue(service.hasAnyRole("ADMIN", "TEST"));
+    assertTrue(service.hasAnyRole("TEST", "NOT-EXISTS"));
   }
 
   @Test
-  public void verifyHasAnyRole() throws Exception {
+  void verifyHasAnyRole() {
     Context.set(SecurityService.CONTEXT_KEY_ROLES, "ADMIN,TEST");
     service.verifyHasAnyRole("ADMIN");
     service.verifyHasAnyRole("TEST");
@@ -56,41 +52,47 @@ public class SecurityServiceImplTest {
     service.verifyHasAnyRole("TEST", "NOT-EXISTS");
   }
 
-  @Test(expected = SecurityException.class)
-  public void verifyHasAnyRoleFailed() throws Exception {
-    Context.set(SecurityService.CONTEXT_KEY_ROLES, "ADMIN");
-    service.verifyHasAnyRole("NOT-EXISTS");
+  @Test
+  void verifyHasAnyRoleFailed() {
+    assertThrows(SecurityException.class, () -> {
+      Context.set(SecurityService.CONTEXT_KEY_ROLES, "ADMIN");
+      service.verifyHasAnyRole("NOT-EXISTS");
+    });
   }
 
   @Test
-  public void hasAllRole() throws Exception {
-    assertThat(service.hasAllRole("ADMIN"), is(false));
-    assertThat(service.hasAllRole("ADMIN", "TEST"), is(false));
+  void hasAllRole() {
+    assertFalse(service.hasAllRole("ADMIN"));
+    assertFalse(service.hasAllRole("ADMIN", "TEST"));
     Context.set(SecurityService.CONTEXT_KEY_ROLES, "ADMIN,TEST");
-    assertThat(service.hasAllRole("NOT-EXISTS"), is(false));
-    assertThat(service.hasAllRole("TEST", "NOT-EXISTS"), is(false));
-    assertThat(service.hasAllRole("ADMIN"), is(true));
-    assertThat(service.hasAllRole("TEST"), is(true));
-    assertThat(service.hasAllRole("ADMIN", "TEST"), is(true));
+    assertFalse(service.hasAllRole("NOT-EXISTS"));
+    assertFalse(service.hasAllRole("TEST", "NOT-EXISTS"));
+    assertTrue(service.hasAllRole("ADMIN"));
+    assertTrue(service.hasAllRole("TEST"));
+    assertTrue(service.hasAllRole("ADMIN", "TEST"));
   }
 
   @Test
-  public void VerifyHasAllRole() throws Exception {
+  void VerifyHasAllRole() {
     Context.set(SecurityService.CONTEXT_KEY_ROLES, "ADMIN,TEST");
     service.verifyHasAllRole("ADMIN");
     service.verifyHasAllRole("TEST");
     service.verifyHasAllRole("ADMIN", "TEST");
   }
 
-  @Test(expected = SecurityException.class)
-  public void verifyHasAllRoleFailed1() throws Exception {
-    Context.set(SecurityService.CONTEXT_KEY_ROLES, "ADMIN");
-    service.verifyHasAllRole("NOT-EXISTS");
+  @Test
+  void verifyHasAllRoleFailed1() {
+    assertThrows(SecurityException.class, () -> {
+      Context.set(SecurityService.CONTEXT_KEY_ROLES, "ADMIN");
+      service.verifyHasAllRole("NOT-EXISTS");
+    });
   }
 
-  @Test(expected = SecurityException.class)
-  public void verifyHasAllRoleFailed2() throws Exception {
-    Context.set(SecurityService.CONTEXT_KEY_ROLES, "ADMIN,TEST");
-    service.verifyHasAllRole("ADMIN", "NOT-EXISTS");
+  @Test
+  void verifyHasAllRoleFailed2() {
+    assertThrows(SecurityException.class, () -> {
+      Context.set(SecurityService.CONTEXT_KEY_ROLES, "ADMIN,TEST");
+      service.verifyHasAllRole("ADMIN", "NOT-EXISTS");
+    });
   }
 }

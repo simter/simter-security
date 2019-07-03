@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 /**
  * System Security Implementation by Context
  *
- * @author RJ 2017-04-25
+ * @author RJ
  */
 @Named
 @Singleton
